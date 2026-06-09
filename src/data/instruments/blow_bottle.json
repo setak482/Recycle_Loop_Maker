@@ -1,0 +1,17 @@
+{
+  "id": "blow_bottle",
+  "name": "페트병",
+  "role": "melody",
+  "category": "melody",
+  "color": "#a8d8ea",
+  "img": "/img/blow_bottle.png",
+  "pitched": true,
+  "volume": 0,
+  "duration": 1,
+  "sample": {
+    "type": "sampler",
+    "notes": {
+      "C4": "/sound/blow_bottle.wav"
+    }
+  }
+}

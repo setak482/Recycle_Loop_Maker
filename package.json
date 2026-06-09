@@ -1,0 +1,20 @@
+{
+  "name": "recycleloop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "audiobuffer-to-wav": "^1.0.0",
+    "file-saver": "^2.0.5",
+    "gsap": "^3.15.0",
+    "tone": "^15.1.22"
+  }
+}

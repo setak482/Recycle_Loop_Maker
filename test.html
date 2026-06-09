@@ -1,0 +1,226 @@
+<!-- test.html (프로젝트 루트에 생성) -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resource Test</title>
+  <style>
+    body { font-family: sans-serif; padding: 32px; background: #f4f4f4; }
+    .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .status { font-weight: bold; margin-left: 8px; }
+    .ok  { color: #4caf50; }
+    .err { color: #f44336; }
+    img  { max-width: 120px; border-radius: 8px; display: block; margin-top: 12px; }
+    button { margin-top: 12px; padding: 10px 24px; border: none; border-radius: 8px; background: #555; color: white; cursor: pointer; font-size: 15px; }
+    button:hover { background: #333; }
+  </style>
+</head>
+<body>
+
+  <h2>🧪 리소스 테스트</h2>
+
+  <!-- 이미지 테스트 -->
+  <div class="card">
+    <h3>📷 이미지 <span id="img-status" class="status">확인 중...</span></h3>
+    <img
+      id="test-img"
+      src="/sound/blow_bottle.png"
+      alt="blow_bottle"
+      onload="setStatus('img-status', true)"
+      onerror="setStatus('img-status', false)"
+    />
+  </div>
+
+  <!-- 오디오 테스트 -->
+  <div class="card">
+    <h3>🔊 오디오 <span id="audio-status" class="status">확인 중...</span></h3>
+    <button onclick="playAudio()">▶ 재생</button>
+  </div>
+
+  <script>
+    // 이미지 경로 수정
+    document.getElementById('test-img').src = '/img/blow_bottle.png';
+
+    function setStatus(id, ok) {
+      const el = document.getElementById(id);
+      el.textContent = ok ? '✅ OK' : '❌ 로드 실패';
+      el.className = 'status ' + (ok ? 'ok' : 'err');
+    }
+
+    async function playAudio() {
+      const ctx = new AudioContext();
+      try {
+        const res = await fetch('/sound/blow_bottle.wav');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const buffer = await res.arrayBuffer();
+        const decoded = await ctx.decodeAudioData(buffer);
+        const source = ctx.createBufferSource();
+        source.buffer = decoded;
+        source.connect(ctx.destination);
+        source.start();
+        setStatus('audio-status', true);
+      } catch (e) {
+        setStatus('audio-status', false);
+        console.error(e);
+      }
+    }
+  </script>
+
+  <!-- 기쁨의 송가 테스트 -->
+<div class="card">
+  <h3>🎵 인벤션 8 <span id="ode-status" class="status"></span></h3>
+  <button onclick="playOde()">▶ 재생</button>
+</div>
+
+<script>
+  // ── 음정 → playbackRate 변환 ──────────────────────────
+  // 샘플이 C4 기준이므로 각 음의 주파수 비율로 속도 조절
+const NOTE_RATE = {
+  // 0 Octave (A0 ~ B0)
+  'A0': 0.105, 'A#0': 0.111, 'Bb0': 0.111, 'B0': 0.118,
+
+  // 1st Octave (C1 ~ B1)
+  'C1': 0.125, 'C#1': 0.132, 'Db1': 0.132, 'D1': 0.140, 'D#1': 0.149, 'Eb1': 0.149, 
+  'E1': 0.157, 'F1': 0.167, 'F#1': 0.177, 'Gb1': 0.177, 'G1': 0.187, 'G#1': 0.198, 
+  'Ab1': 0.198, 'A1': 0.210, 'A#1': 0.223, 'Bb1': 0.223, 'B1': 0.236,
+
+  // 2nd Octave (C2 ~ B2)
+  'C2': 0.250, 'C#2': 0.265, 'Db2': 0.265, 'D2': 0.281, 'D#2': 0.297, 'Eb2': 0.297, 
+  'E2': 0.315, 'F2': 0.334, 'F#2': 0.354, 'Gb2': 0.354, 'G2': 0.375, 'G#2': 0.397, 
+  'Ab2': 0.397, 'A2': 0.420, 'A#2': 0.445, 'Bb2': 0.445, 'B2': 0.472,
+
+  // 3rd Octave (C3 ~ B3)
+  'C3': 0.500, 'C#3': 0.530, 'Db3': 0.530, 'D3': 0.561, 'D#3': 0.595, 'Eb3': 0.595, 
+  'E3': 0.630, 'F3': 0.667, 'F#3': 0.707, 'Gb3': 0.707, 'G3': 0.749, 'G#3': 0.794, 
+  'Ab3': 0.794, 'A3': 0.841, 'A#3': 0.891, 'Bb3': 0.891, 'B3': 0.944,
+
+  // 4th Octave (C4 ~ B4) - Base Octave
+  'C4': 1.000, 'C#4': 1.059, 'Db4': 1.059, 'D4': 1.122, 'D#4': 1.189, 'Eb4': 1.189, 
+  'E4': 1.260, 'F4': 1.335, 'F#4': 1.414, 'Gb4': 1.414, 'G4': 1.498, 'G#4': 1.587, 
+  'Ab4': 1.587, 'A4': 1.682, 'A#4': 1.782, 'Bb4': 1.782, 'B4': 1.888,
+
+  // 5th Octave (C5 ~ B5)
+  'C5': 2.000, 'C#5': 2.119, 'Db5': 2.119, 'D5': 2.245, 'D#5': 2.378, 'Eb5': 2.378, 
+  'E5': 2.520, 'F5': 2.670, 'F#5': 2.828, 'Gb5': 2.828, 'G5': 2.997, 'G#5': 3.175, 
+  'Ab5': 3.175, 'A5': 3.364, 'A#5': 3.564, 'Bb5': 3.564, 'B5': 3.776,
+
+  // 6th Octave (C6 ~ B6)
+  'C6': 4.000, 'C#6': 4.238, 'Db6': 4.238, 'D6': 4.490, 'D#6': 4.757, 'Eb6': 4.757, 
+  'E6': 5.040, 'F6': 5.340, 'F#6': 5.657, 'Gb6': 5.657, 'G6': 5.993, 'G#6': 6.350, 
+  'Ab6': 6.350, 'A6': 6.727, 'A#6': 7.127, 'Bb6': 7.127, 'B6': 7.551,
+
+  // 7th Octave (C7 ~ B7)
+  'C7': 8.000, 'C#7': 8.476, 'Db7': 8.476, 'D7': 8.980, 'D#7': 9.514, 'Eb7': 9.514, 
+  'E7': 10.079, 'F7': 10.679, 'F#7': 11.314, 'Gb7': 11.314, 'G7': 11.986, 'G#7': 12.699, 
+  'Ab7': 12.699, 'A7': 13.454, 'A#7': 14.254, 'Bb7': 14.254, 'B7': 15.102,
+
+  // 8th Octave (C8) - The highest key on a standard piano
+  'C8': 16.000
+};
+
+
+  // ── 인벤션 8번 시퀀스 [음정, 박자(초)] ────────────────
+const S = 0.175;
+
+const INV8_SOPRANO = [
+  // m1 — 주제 제시
+  [null, 2*S], ['F5', 2*S], ['A5', 2*S], ['F5', 2*S], ['C6', 2*S],['F5',2*S],
+  ['F6', 2*S], ['E6', S], ['D6', S], ['C6', S], ['D6',S],['C6',S],['Bb5',S],['A5',S],['Bb5',S],['A5',S],['G5',S],
+  ['F5', 2*S], ['A5', 2*S], ['C6', 2*S], ['A5', 2*S], ['F6', 2*S],['C6',2*S],
+  ['A6',S],['C7',S],['Bb6',S],['C7',S],['A6',S],['C7',S],['Bb6',S],['C7',S],['A6',S],['C7',S],['Bb6',S],['C7',S],
+  ['F6',S],['A6',S],['G6',S],['A6',S],['F6',S],['A6',S],['G6',S],['A6',S],['F6',S],['A6',S],['G6',S],['A6',S],
+  ['D6',S],['F6',S],['E6',S],['F6',S],['D6',S],['F6',S],['E6',S],['F6',S],['D6',S],['F6',S],['E6',S],['F6',S],
+  ['B5', 2*S], ['G5', 2*S], ['D6', 2*S], ['B5', 2*S], ['F6', 2*S], ['D6',2*S],
+  ['G6',S],['A6',S],['G6',S],['F6',S],['E6',S],['F6',S],['E6',S],['D6',S],['C6',S],['D6',S],['C6',S],['Bb5',S],
+  ['A5', 2*S], ['D6', S], ['C6', S], ['B5', S], ['C6',S],['B5',S],['A5',S],['G5',S],['A5',S],['G5',S],['F5',S],
+  ['E5',S],['F5',S],['E5',S],['D5',S],['C5',2*S],['C6',S],['B5',S],['C6',2*S],['E5',2*S],
+  ['F5',2*S],['C6',2*S],['E5',2*S],['C6',2*S],['D5',2*S],['B5',2*S],
+  ['C6',8*S],
+]
+
+const INV8_ALTO = [
+  // m1 — 소프라노 쉬는 동안 쉼
+  ...Array(6).fill([null, 2*S]), // 1마다 쉬고
+
+    [null, 2*S], ['F4', 2*S], ['A4', 2*S], ['F4', 2*S], ['C5', 2*S],['F4',2*S],
+    ['F5', 2*S], ['E5', S], ['D5', S], ['C5', S], ['D5',S],['C5',S],['Bb4',S],['A4',S],['Bb4',S],['A4',S],['G4',S],
+    ['F4', 2*S], ['A4', 2*S], ['C5', 2*S], ['A4', 2*S], ['F5', 2*S],['C5',2*S],
+    ['A5',S],['C6',S],['Bb5',S],['C6',S],['A5',S],['C6',S],['Bb5',S],['C6',S],['A5',S],['C6',S],['Bb5',S],['C6',S],
+    ['F5',S],['A5',S],['G5',S],['A5',S],['F5',S],['A5',S],['G5',S],['A5',S],['F5',S],['A5',S],['G5',S],['A5',S],
+    ['D5',S],['F5',S],['E5',S],['F5',S],['D5',S],['F5',S],['E5',S],['F5',S],['D5',S],['F5',S],['E5',S],['F5',S],
+    ['B4', 2*S], ['G4', 2*S], ['C5', 2*S], ['G4', 2*S], ['E5', 2*S], ['C5',2*S],
+    ['F5',S],['G5',S],['F5',S],['E5',S],['D5',S],['E5',S],['D5',S],['C5',S],['B4',S],['C5',S],['B4',S],['A4',S],
+    ['G4',2*S],['C5',S],['B4',S],['A4',S],['B4',S],['A4',S],['G4',S],['F4',S],['G4',S],['F4',S],['E4',S],
+    ['D4',S],['E4',S],['D4',S],['C4',S],['G4',S],['F4',S],['E4',S],['F4',S],['G4',2*S],['G3',8*S],
+    [null,2*S]
+];
+
+  async function playOde() {
+  const ctx = new AudioContext();
+  const res = await fetch('/sound/blow_bottle.wav');
+  const decoded = await ctx.decodeAudioData(await res.arrayBuffer());
+
+  // 재사용 가능한 노트 재생 함수
+function scheduleSequence(sequence, startTime) {
+  let time = startTime;
+  for (const [note, duration] of sequence) {
+    if (note !== null) {
+      if (NOTE_RATE[note] === undefined) {
+        console.warn(`NOTE_RATE에 없는 음: ${note}`);  // ← 어떤 음이 없는지 바로 찍힘
+      } else {
+        const source = ctx.createBufferSource();
+        source.buffer = decoded;
+        source.playbackRate.value = NOTE_RATE[note];
+        source.connect(ctx.destination);
+        source.start(time);
+        source.stop(time+duration);
+      }
+    }
+    time += duration;
+  }
+}
+
+
+  const start = ctx.currentTime + 0.1;
+  scheduleSequence(INV8_SOPRANO, start); // 1성부
+  scheduleSequence(INV8_ALTO, start);    // 2성부 — 동시 시작
+}
+</script>
+
+<div class="card">
+  <h3>📋 JSON 로드 <span id="json-status" class="status">확인 중...</span></h3>
+  <pre id="json-output" style="font-size:12px; margin-top:12px;"></pre>
+</div>
+
+<script>
+  async function loadInstruments() {
+    try {
+      // 1. 목록 fetch
+      const { instruments } = await fetch('/src/data/instruments.json')
+        .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); });
+
+      // 2. 각 악기 개별 fetch (현재는 blow_bottle 하나)
+      const details = await Promise.all(
+        instruments.map(inst =>
+          fetch(`/src/data/instruments/${inst.id}.json`)
+            .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
+        )
+      );
+
+      setStatus('json-status', true);
+      document.getElementById('json-output').textContent
+        = JSON.stringify(details, null, 2);
+
+    } catch (e) {
+      setStatus('json-status', false);
+      console.error(e);
+    }
+  }
+
+  loadInstruments();
+</script>
+
+
+
+</body>
+</html>
