@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RecycLoop</title>
-  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="stylesheet" href="/src/style/base.css" />
+  <link rel="stylesheet" href="/src/style/grid.css" />
+  <link rel="stylesheet" href="/src/style/object.css" />
+  <link rel="stylesheet" href="/src/style/ui.css" />
+  <link rel="stylesheet" href="/src/style/animations.css" />
 </head>
 <body>
 
@@ -40,6 +44,11 @@
       <div class="bpm-control">
         <span id="bpm-label">120 BPM</span>
         <input id="btn-bpm" type="range" min="30" max="200" value="120" />
+      </div>
+
+      <div class="volume-control">
+        <span id="volume-label">0 dB</span>
+        <input id="btn-volume" type="range" min="-80" max="12" value="0" />
       </div>
 
       <div class="subdivision-control">

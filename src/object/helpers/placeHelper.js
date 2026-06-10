@@ -49,5 +49,6 @@ export async function placeHelper(manager, id, cellKey) {
     manager.objects.set(cellKey, { id, img, detail });
 
     manager.playback.register(cellKey, detail);
+    manager.refreshDurationLines?.();
     manager.playback.updateRange(manager);
 }

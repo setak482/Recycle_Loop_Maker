@@ -7,12 +7,13 @@ export function setupFloatingPanels() {
   });
 }
 
-export function setupSubdivisionControls(playback, grid) {
+export function setupSubdivisionControls(playback, grid, objects) {
   document.querySelectorAll('input[name="sub"]').forEach(radio => {
     radio.addEventListener('change', e => {
       const value = e.target.value;
       playback.setSubdivision(value);
       grid.setSubdivision(value);
+      objects.refreshDurationLines?.();
     });
   });
 }

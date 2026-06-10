@@ -1,5 +1,11 @@
 import { triggerColHelper } from './triggerHelper.js';
 import { calcRangeHelper } from './rangeHelper.js';
+import { getMeasureInterval } from '../../grid/helpers/subdivisionHelper.js';
+
+function getStopBoundaryCol(currentCol, interval) {
+  const remainder = (currentCol + 1) % interval;
+  return remainder === 0 ? currentCol : currentCol + (interval - remainder);
+}
 
 /**
  * @param {PlaybackManager} playbackManager
@@ -32,10 +38,20 @@ export async function startHelper(playbackManager, objectManager) {
 
   playbackManager._currentCol = playbackManager._startCol;
   playbackManager._lastObjectManager = objectManager;
+  playbackManager._stopPending = false;
+  playbackManager._stopCol = null;
 
   playbackManager._loop = new Tone.Sequence((time) => {
     triggerColHelper(playbackManager, playbackManager._currentCol, objectManager, time);
     playbackManager._movePlayhead(playbackManager._currentCol);
+
+    if (playbackManager._stopPending && playbackManager._currentCol === playbackManager._stopCol) {
+      playbackManager._stopPending = false;
+      playbackManager._stopCol = null;
+      stopHelper(playbackManager);
+      return;
+    }
+
     playbackManager._currentCol = playbackManager._currentCol >= playbackManager._endCol
       ? playbackManager._startCol
       : playbackManager._currentCol + 1;
@@ -47,13 +63,29 @@ export async function startHelper(playbackManager, objectManager) {
 
 /**
  * @param {PlaybackManager} playbackManager
+ * @param {{ alignToBoundary?: boolean }} [options]
  * @returns {void}
  */
-export function stopHelper(playbackManager) {
+export function stopHelper(playbackManager, { alignToBoundary = false } = {}) {
   if (!playbackManager._Tone) return;
+
+  const transport = playbackManager._Tone.getTransport();
+  if (transport.state !== 'started') return;
+
+  if (alignToBoundary) {
+    playbackManager._stopPending = true;
+    playbackManager._stopCol = getStopBoundaryCol(
+      playbackManager._currentCol,
+      getMeasureInterval(playbackManager.subdivision)
+    );
+    return;
+  }
+
+  playbackManager._stopPending = false;
+  playbackManager._stopCol = null;
   playbackManager._loop?.stop().dispose();
   playbackManager._loop = null;
-  playbackManager._Tone.getTransport().stop();
-  playbackManager._Tone.getTransport().position = 0;
+  transport.stop();
+  transport.position = 0;
   playbackManager._movePlayhead(playbackManager._startCol);
 }

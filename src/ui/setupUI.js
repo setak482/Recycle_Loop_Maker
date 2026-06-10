@@ -15,7 +15,7 @@ export function setupUI(playback, objects, selection, grid) {
     selectedInstrumentElement?.classList.remove('active');
     selectedInstrumentElement = null;
   });
-  setupSubdivisionControls(playback, grid);
+  setupSubdivisionControls(playback, grid, objects);
   setupGridPlacement(grid, objects, selection, () => selectedInstrumentId);
 
   loadInstrumentPanel((instId, element) => {

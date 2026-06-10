@@ -15,6 +15,22 @@ export function setupPlaybackControls(playback, objects) {
       document.getElementById('play-icon').textContent = isPlaying ? '⏹' : '▶';
     }, 100);
   });
+
+  const bpmInput = document.getElementById('btn-bpm');
+  const bpmLabel = document.getElementById('bpm-label');
+  bpmInput?.addEventListener('input', e => {
+    const bpm = parseInt(e.target.value, 10);
+    playback.setBpm(bpm);
+    if (bpmLabel) bpmLabel.textContent = `${bpm} BPM`;
+  });
+
+  const volumeInput = document.getElementById('btn-volume');
+  const volumeLabel = document.getElementById('volume-label');
+  volumeInput?.addEventListener('input', e => {
+    const volume = parseInt(e.target.value, 10);
+    playback.setVolume?.(volume);
+    if (volumeLabel) volumeLabel.textContent = `${volume} dB`;
+  });
 }
 
 export function setupFileControls(playback, objects, selection, clearInstrumentState = () => {}) {

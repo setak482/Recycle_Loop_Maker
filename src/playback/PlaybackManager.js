@@ -23,7 +23,10 @@ export class PlaybackManager {
     this._currentCol = 0;
     this._Tone = null; // 동적 로드 후 저장
     this._lastObjectManager = null;
+    this._stopPending = false;
+    this._stopCol = null;
     this.subdivision = DEFAULT_SUB;
+    this.masterVolume = 0;
   }
 
   init(gridManager) {
@@ -62,11 +65,15 @@ export class PlaybackManager {
     stopHelper(this);
   }
 
+  stopAtMeasureBoundary() {
+    stopHelper(this, { alignToBoundary: true });
+  }
+
   toggle(objectManager) {
     if (!this._Tone || this._Tone.getTransport().state !== 'started') {
       this.start(objectManager);
     } else {
-      this.stop();
+      this.stopAtMeasureBoundary();
     }
   }
 
@@ -81,6 +88,13 @@ export class PlaybackManager {
   setBpm(bpm) {
     this.bpm = bpm;
     if (this._Tone) this._Tone.getTransport().bpm.value = bpm;
+  }
+
+  setVolume(db) {
+    this.masterVolume = db;
+    if (this._Tone) {
+      this._Tone.Destination.volume.value = db;
+    }
   }
 
   updateRange(objectManager) {

@@ -33,5 +33,6 @@ export function moveHelper(manager, fromKey, toKey){
 
     manager.playback.unregister(fromKey);
     manager.playback.register(toKey, obj.detail);
+    manager.refreshDurationLines?.();
     manager.playback.updateRange(manager);
 }

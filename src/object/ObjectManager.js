@@ -2,6 +2,7 @@ import { initHelper } from './helpers/initHelper.js';
 import { placeHelper } from './helpers/placeHelper.js';
 import { removeHelper } from './helpers/removeHelper.js';
 import { moveHelper } from './helpers/moveHelper.js';
+import { renderDurationLines } from './helpers/durationLineHelper.js';
 // Dynamic grid expansion disabled; helper removed
 
 /**
@@ -40,11 +41,16 @@ export class ObjectManager {
       this.playback.unregister(key);
       this.objects.delete(key);
     });
+    renderDurationLines(this.grid, this.objects, this.playback.bpm);
     this.playback.updateRange(this);
   }
 
   move(fromKey, toKey) {
     moveHelper(this, fromKey, toKey);
+  }
+
+  refreshDurationLines() {
+    renderDurationLines(this.grid, this.objects, this.playback.bpm);
   }
 
   getAll() {

@@ -7,5 +7,6 @@ export function removeHelper(manager, cellKey){
     manager.objects.delete(cellKey);
 
     manager.playback.unregister(cellKey);
+    manager.refreshDurationLines?.();
     manager.playback.updateRange(manager);
 }
