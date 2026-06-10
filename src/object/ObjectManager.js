@@ -16,19 +16,26 @@ export class ObjectManager {
     this.grid     = gridManager;
     this.playback = playbackManager;
     this.objects  = new Map();
+    this.history  = null;
   }
 
   init(){
     initHelper(this);
   }
 
-  async place(id, cellKey) {
-    const result = await placeHelper(this, id, cellKey);
+  setHistory(history) {
+    this.history = history;
+  }
+
+  async place(id, cellKey, options = {}) {
+    const result = await placeHelper(this, id, cellKey, options);
+    this.history?.commit();
     return result;
   }
 
   remove(cellKey) {
     removeHelper(this, cellKey);
+    this.history?.commit();
   }
 
   reset() {
@@ -43,10 +50,12 @@ export class ObjectManager {
     });
     renderDurationLines(this.grid, this.objects, this.playback.bpm);
     this.playback.updateRange(this);
+    this.history?.commit();
   }
 
-  move(fromKey, toKey) {
-    moveHelper(this, fromKey, toKey);
+  move(fromKey, toKey, options = {}) {
+    moveHelper(this, fromKey, toKey, options);
+    this.history?.commit();
   }
 
   refreshDurationLines() {

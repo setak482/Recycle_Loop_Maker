@@ -4,6 +4,7 @@ import { calcRangeHelper, updateRangeHelper } from './helpers/rangeHelper.js';
 import { triggerColHelper } from './helpers/triggerHelper.js';
 import { registerHelper, unregisterHelper } from './helpers/registerHelper.js';
 import { startHelper, stopHelper } from './helpers/transportHelper.js';
+import { previewNoteHelper } from './helpers/previewHelper.js';
 
 /**
  * @class PlaybackManager
@@ -60,6 +61,11 @@ export class PlaybackManager {
 
   unregister(cellKey) {
     unregisterHelper(this, cellKey);
+  }
+
+  previewNote(cellKey, detail) {
+    previewNoteHelper(this, cellKey, detail)
+      .catch(err => console.error('배치 미리듣기 재생 실패:', err));
   }
 
   async start(objectManager) {
