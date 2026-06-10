@@ -28,6 +28,11 @@ export async function placeHelper(manager, id, cellKey) {
     img.classList.add('placed-object');
 
     manager.grid.getCell(cellKey).el.appendChild(img);
+    img.classList.add('bounce-in');
+    img.addEventListener('animationend', () => {
+      img.classList.remove('bounce-in');
+    }, { once: true });
+
     manager.grid.setOccupied(cellKey, true);
     manager.objects.set(cellKey, { id, img, detail });
 

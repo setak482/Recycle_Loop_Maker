@@ -298,6 +298,27 @@ body {
   z-index: 10;
 }
 
+.placed-object.bounce-in {
+  animation: placeBounce 260ms ease-out;
+}
+
+@keyframes placeBounce {
+  0% {
+    transform: translate(-50%, -50%) scale(0.7);
+    opacity: 0;
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 1;
+  }
+  85% {
+    transform: translate(-50%, -50%) scale(0.98);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 .placed-object:hover {
   transform: translate(-50%, -50%) scale(1.1);
 }

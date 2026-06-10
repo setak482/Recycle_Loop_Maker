@@ -58,6 +58,11 @@ function setupUI(playback, objects, grid) {
   // ── 재생 버튼 제어 ──
   const playBtn = document.getElementById('btn-play');
   playBtn?.addEventListener('click', () => {
+    if (objects.getAll().length === 0) {
+      alert('배치된 오브젝트가 없습니다. 악기를 선택하고 그리드에 배치한 뒤 재생해주세요.');
+      return;
+    }
+
     playback.toggle(objects);
     
     // 재생 상태 반영 (약간의 딜레이 후 버튼 UI 토글)
