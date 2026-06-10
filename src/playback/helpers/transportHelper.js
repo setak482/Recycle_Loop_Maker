@@ -1,6 +1,7 @@
 import { triggerColHelper } from './triggerHelper.js';
 import { calcRangeHelper } from './rangeHelper.js';
 import { ensureSamplerHelper } from './registerHelper.js';
+import { loadTone } from './toneLoader.js';
 import { getMeasureInterval } from '../../grid/helpers/subdivisionHelper.js';
 
 function getStopBoundaryCol(currentCol, interval) {
@@ -41,15 +42,9 @@ export function advanceColHelper(playbackManager) {
  * @returns {Promise<void>}
  */
 export async function startHelper(playbackManager, objectManager) {
-  if (!playbackManager._Tone) {
-    playbackManager._Tone = await import('tone');
-  }
-
-  const Tone = playbackManager._Tone;
+  const Tone = await loadTone(playbackManager);
   await Tone.start();
   Tone.getTransport().bpm.value = playbackManager.bpm;
-  // Tone 로드 전에 조절해 둔 마스터 볼륨을 반영합니다.
-  Tone.Destination.volume.value = playbackManager.masterVolume;
 
   if (!calcRangeHelper(playbackManager, objectManager)) {
     console.warn('배치된 오브젝트 없음');

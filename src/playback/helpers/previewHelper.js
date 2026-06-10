@@ -1,4 +1,5 @@
 import { KEYS } from '../../constants/keys.js';
+import { loadTone } from './toneLoader.js';
 
 /**
  * 블록이 놓인 셀의 행(음높이)에 맞는 소리를 즉시 한 번 재생합니다.
@@ -20,11 +21,7 @@ export async function previewNoteHelper(playbackManager, cellKey, detail) {
   const note = KEYS[rowIndex]?.note;
   if (!note) return;
 
-  if (!playbackManager._Tone) {
-    playbackManager._Tone = await import('tone');
-    playbackManager._Tone.Destination.volume.value = playbackManager.masterVolume;
-  }
-  const Tone = playbackManager._Tone;
+  const Tone = await loadTone(playbackManager);
   await Tone.start();
 
   // 샘플러는 악기별로 공유됩니다 (id 키)
