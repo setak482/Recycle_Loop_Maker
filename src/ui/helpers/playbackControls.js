@@ -5,7 +5,8 @@ import { serializeProject, parseProject, makeProjectFileName } from '../../io/pr
 export function setupPlaybackControls(playback, objects) {
   const playBtn = document.getElementById('btn-play');
   playBtn?.addEventListener('click', () => {
-    if (objects.getAll().length === 0) {
+    const playable = objects.getAll().filter(([, obj]) => !obj.detail?.marker);
+    if (playable.length === 0) {
       showToast('배치된 오브젝트가 없습니다. 먼저 악기를 배치해주세요.');
       return;
     }

@@ -9,6 +9,7 @@ import { KEYS } from '../../constants/keys.js';
 export function triggerColHelper(playbackManager, col, objectManager, time) {
   objectManager.objects.forEach((obj, cellKey) => {
     if (parseInt(cellKey.split('-')[0]) !== col) return;
+    if (obj.detail?.marker) return; // 마커는 소리·애니메이션 없음
 
     const sampler = playbackManager._samplers.get(cellKey);
     if (sampler?.loaded) {

@@ -294,6 +294,25 @@ export class SelectionManager {
     showToast('복사됨. 붙여넣을 위치로 이동 후 클릭하세요.');
   }
 
+  async changeSelectionInstrument(id) {
+    const selectedKeys = [...this.selectionState.keys].filter(key => this.objects.objects.has(key));
+    if (!selectedKeys.length) return false;
+
+    this.objects.history?.beginBatch();
+    try {
+      for (const key of selectedKeys) {
+        this.objects.remove(key);
+        await this.objects.place(id, key);
+      }
+    } finally {
+      this.objects.history?.endBatch();
+    }
+
+    this.updateSelectionKeys(selectedKeys);
+    showToast(`${selectedKeys.length}개 악기 변경됨`);
+    return true;
+  }
+
   deleteSelection() {
     const selectedKeys = [...this.selectionState.keys].filter(key => this.objects.objects.has(key));
     if (!selectedKeys.length) {

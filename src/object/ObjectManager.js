@@ -28,8 +28,14 @@ export class ObjectManager {
   }
 
   async place(id, cellKey, options = {}) {
-    const result = await placeHelper(this, id, cellKey, options);
-    this.history?.commit();
+    // 마커 교체(기존 제거 + 새 배치)가 undo 한 단위가 되도록 batch로 묶음
+    this.history?.beginBatch();
+    let result;
+    try {
+      result = await placeHelper(this, id, cellKey, options);
+    } finally {
+      this.history?.endBatch();
+    }
     return result;
   }
 

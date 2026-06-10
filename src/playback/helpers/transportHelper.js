@@ -56,7 +56,7 @@ export async function startHelper(playbackManager, objectManager) {
     }
 
     playbackManager._currentCol = playbackManager._currentCol >= playbackManager._endCol
-      ? playbackManager._startCol
+      ? playbackManager._loopStartCol
       : playbackManager._currentCol + 1;
   }, [0], playbackManager.subdivision);
 
@@ -91,6 +91,8 @@ export function stopHelper(playbackManager, { alignToBoundary = false } = {}) {
   playbackManager._loop = null;
   transport.stop();
   transport.position = 0;
+  // 정지 후 실행될 예약된 플레이헤드 이동 콜백 제거 (시작 위치 복귀가 덮어써지지 않게)
+  playbackManager._Tone.Draw.cancel();
   playbackManager._movePlayhead(playbackManager._startCol);
   playbackManager.onPlaybackStateChange?.('stopped');
 }

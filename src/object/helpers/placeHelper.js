@@ -35,6 +35,16 @@ export async function placeHelper(manager, id, cellKey, { preview = false } = {}
     if (!detail) return;
     if (manager.grid.isOccupied(cellKey)) return;
 
+    // 마커(중단점·도돌이표)는 종류별로 하나만 — 기존 마커를 제거 후 배치
+    if (detail.marker) {
+        for (const [key, obj] of manager.objects) {
+            if (obj.detail?.marker === detail.marker) {
+                manager.remove(key);
+                break;
+            }
+        }
+    }
+
     const img = document.createElement('img');
     img.src = detail.img;
     img.alt = detail.name;
