@@ -1,9 +1,9 @@
 import { KEYS } from '../constants/keys.js';
 
-import { setGridStyle, createCell, centerGrid } from './initGrid.js';
-import { initPan }  from './initPan.js';
-import { extendCols } from './extendHelper.js';
-import { applyTransform, setZoom, zoomBy } from './zoomHelper.js';
+import { setGridStyle, createCell, centerGrid } from './helpers/initGrid.js';
+import { initPan }  from './helpers/initPan.js';
+import { extendCols } from './helpers/extendHelper.js';
+import { applyTransform, setZoom, zoomBy } from './helpers/zoomHelper.js';
 
 /**
  * @class GridManager

@@ -1,9 +1,9 @@
 import { DEFAULT_BPM, DEFAULT_SUB } from '../constants/config.js';
-import { initHelper, initPlayheadHelper, movePlayheadHelper } from './initHelper.js';
-import { calcRangeHelper, updateRangeHelper } from './rangeHelper.js';
-import { triggerColHelper } from './triggerHelper.js';
-import { registerHelper, unregisterHelper } from './registerHelper.js';
-import { startHelper, stopHelper } from './transportHelper.js';
+import { initHelper, initPlayheadHelper, movePlayheadHelper } from './helpers/initHelper.js';
+import { calcRangeHelper, updateRangeHelper } from './helpers/rangeHelper.js';
+import { triggerColHelper } from './helpers/triggerHelper.js';
+import { registerHelper, unregisterHelper } from './helpers/registerHelper.js';
+import { startHelper, stopHelper } from './helpers/transportHelper.js';
 
 /**
  * @class PlaybackManager

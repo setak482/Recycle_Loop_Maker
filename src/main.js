@@ -2,7 +2,7 @@
 import { GridManager }     from './grid/GridManager.js';
 import { PlaybackManager } from './playback/PlaybackManager.js';
 import { ObjectManager }   from './object/ObjectManager.js';
-import { attachZoomWheel, initZoomIndicator } from './ui/zoomHelper.js';
+import { attachZoomWheel, initZoomIndicator } from './ui/helpers/zoomHelper.js';
 
 // ==========================================
 // 1. 핵심 매니저 생성 및 초기화 (실행 영역)

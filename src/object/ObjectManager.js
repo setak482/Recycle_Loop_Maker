@@ -1,8 +1,8 @@
-import { initHelper } from "./initHelper";
-import { placeHelper } from "./placeHelper";
-import { removeHelper } from "./removeHelper";
-import { moveHelper } from "./moveHelper";
-import { expandGridIfNeeded } from "./gridExpansionHelper";
+import { initHelper } from './helpers/initHelper.js';
+import { placeHelper } from './helpers/placeHelper.js';
+import { removeHelper } from './helpers/removeHelper.js';
+import { moveHelper } from './helpers/moveHelper.js';
+import { expandGridIfNeeded } from './helpers/gridExpansionHelper.js';
 
 /**
  * @class ObjectManager
