@@ -26,7 +26,7 @@ export function setupGridPlacement(grid, objects, selection, getSelectedInstrume
 
     const selectedInstrumentId = getSelectedInstrumentId();
     if (selectedInstrumentId) {
-      objects.place(selectedInstrumentId, key);
+      objects.place(selectedInstrumentId, key, { preview: true });
     }
   });
 }

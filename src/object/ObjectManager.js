@@ -19,10 +19,15 @@ export class ObjectManager {
     this.playback = playbackManager;
     this.objects  = new Map();
     this.objectsByCol = new Map(); // col(number) → Map<cellKey, obj>
+    this.history  = null;
   }
 
   init(){
     initHelper(this);
+  }
+
+  setHistory(history) {
+    this.history = history;
   }
 
   setObject(cellKey, obj) {
@@ -54,13 +59,21 @@ export class ObjectManager {
     return this.objectsByCol.get(col);
   }
 
-  async place(id, cellKey) {
-    const result = await placeHelper(this, id, cellKey);
+  async place(id, cellKey, options = {}) {
+    // 마커 교체(기존 제거 + 새 배치)가 undo 한 단위가 되도록 batch로 묶음
+    this.history?.beginBatch();
+    let result;
+    try {
+      result = await placeHelper(this, id, cellKey, options);
+    } finally {
+      this.history?.endBatch();
+    }
     return result;
   }
 
   remove(cellKey) {
     removeHelper(this, cellKey);
+    this.history?.commit();
   }
 
   reset() {
@@ -72,10 +85,12 @@ export class ObjectManager {
     this.objectsByCol.clear();
     renderDurationLines(this.grid, this.objects, this.playback.bpm);
     this.playback.updateRange(this);
+    this.history?.commit();
   }
 
-  move(fromKey, toKey) {
-    moveHelper(this, fromKey, toKey);
+  move(fromKey, toKey, options = {}) {
+    moveHelper(this, fromKey, toKey, options);
+    this.history?.commit();
   }
 
   refreshDurationLines() {

@@ -20,17 +20,22 @@ export function triggerColHelper(playbackManager, col, objectManager, time) {
   const bucket = objectManager.getByCol(col);
   if (!bucket || bucket.size === 0) return;
 
+  let hasPlayable = false;
   bucket.forEach(obj => {
+    if (obj.detail?.marker) return; // 마커는 소리·애니메이션 없음
+    hasPlayable = true;
     const sampler = playbackManager._samplers.get(obj.id);
     if (sampler?.loaded && obj.note) {
       const dur = obj.detail.duration ?? 1;
       sampler.triggerAttackRelease(obj.note, dur, time);
     }
   });
+  if (!hasPlayable) return;
 
   // DOM 갱신은 오디오 스케줄링 콜백이 아닌 Draw(rAF) 타이밍에 수행합니다.
   playbackManager._Tone?.Draw.schedule(() => {
     bucket.forEach(obj => {
+      if (obj.detail?.marker) return;
       obj.img.animate(TRIGGER_KEYFRAMES, TRIGGER_TIMING);
     });
   }, time);

@@ -4,6 +4,7 @@ import { calcRangeHelper, updateRangeHelper } from './helpers/rangeHelper.js';
 import { triggerColHelper } from './helpers/triggerHelper.js';
 import { ensureSamplerHelper } from './helpers/registerHelper.js';
 import { startHelper, stopHelper } from './helpers/transportHelper.js';
+import { previewNoteHelper } from './helpers/previewHelper.js';
 
 /**
  * @class PlaybackManager
@@ -18,8 +19,15 @@ export class PlaybackManager {
     this._samplers = new Map(); // instrumentId → Tone.Sampler (악기별 공유)
     this._playhead = null;
     this._world = null;
-    this._startCol = 0;
-    this._endCol = 0;
+    this._startCol = 0;          // 재생 시작 위치 (시작점 마커 반영)
+    this._loopStartCol = 0;      // 타임라인이 되감기는 위치
+    this._endCol = 0;            // 타임라인 끝 위치
+    this._breakpointCol = null;  // 중단점 (도달 시 정지, null = 없음)
+    this._repeatStartCol = null; // 도돌이표 시작 (null = 없음)
+    this._repeatEndCol = null;   // 도돌이표 끝
+    this._repeatTaken = false;   // 이번 바퀴에서 도돌이표를 이미 거쳤는지
+    this._infiniteStartCol = null; // 무한 도돌이표 시작 (null = 없음)
+    this._infiniteEndCol = null;   // 무한 도돌이표 끝
     this._currentCol = 0;
     this._Tone = null; // 동적 로드 후 저장
     this._lastObjectManager = null;
@@ -56,6 +64,11 @@ export class PlaybackManager {
 
   register(detail) {
     ensureSamplerHelper(this, detail);
+  }
+
+  previewNote(cellKey, detail) {
+    previewNoteHelper(this, cellKey, detail)
+      .catch(err => console.error('배치 미리듣기 재생 실패:', err));
   }
 
   async start(objectManager) {
