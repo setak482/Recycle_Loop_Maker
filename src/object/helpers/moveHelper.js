@@ -1,4 +1,4 @@
-export function moveHelper(manager, fromKey, toKey){
+export function moveHelper(manager, fromKey, toKey, { preview = false } = {}){
     if (fromKey === toKey) return;
     if (manager.grid.isOccupied(toKey)) return;
 
@@ -35,4 +35,6 @@ export function moveHelper(manager, fromKey, toKey){
     manager.playback.register(toKey, obj.detail);
     manager.refreshDurationLines?.();
     manager.playback.updateRange(manager);
+
+    if (preview) manager.playback.previewNote?.(toKey, obj.detail);
 }
