@@ -64,6 +64,7 @@ export class ObjectManager {
       this._bulkDirty = true;
       return;
     }
+    this.grid.syncMaterialized?.(); // 저화질 모드 새 점유 셀 DOM 보충
     renderDurationLines(this.grid, this.objects, this.playback.bpm);
     this.playback.updateRange(this);
   }

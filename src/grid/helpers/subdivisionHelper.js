@@ -1,3 +1,5 @@
+import { CELL_W } from '../../constants/config.js';
+
 const SUBDIVISION_INTERVALS = {
   '4n': 4,
   '8n': 8,
@@ -18,6 +20,8 @@ export function applySubdivisionMarkers(manager, subdivision) {
   const prevInterval = manager._markerInterval ?? null;
   const markedCols = manager._markedCols ?? 0; // 마디선 처리가 끝난 열 수
   manager.subdivision = subdivision;
+  // 저화질 모드의 CSS 배경 마디선 간격 (한 마디 = interval 칸)
+  manager.world?.style.setProperty('--bar-w', `${interval * CELL_W}px`);
   if (prevInterval === interval && markedCols >= manager.cols) return;
 
   const setColumn = (col, on) => {
