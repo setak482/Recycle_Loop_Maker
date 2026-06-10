@@ -1,34 +1,48 @@
-export function initHelper(manager){
-    manager.grid.cells.forEach((cell, key) => {
-    const el = cell.el;
+export function initHelper(manager) {
+  const world = manager.grid.world;
 
-    el.addEventListener('dragover', e => {
-        e.preventDefault();
-        e.currentTarget.classList.add('highlight');
-    });
+  world.addEventListener('dragover', e => {
+    const cell = e.target.closest('.grid-cell');
+    if (!cell) return;
 
-    el.addEventListener('dragleave', e => {
-        if (!e.currentTarget.contains(e.relatedTarget)) {
-            e.currentTarget.classList.remove('highlight');
-        }
-    });
+    e.preventDefault();
+    cell.classList.add('highlight');
+  });
 
-    el.addEventListener('drop', e => {
-        e.preventDefault();
-        e.currentTarget.classList.remove('highlight');
+  world.addEventListener('dragleave', e => {
+    const cell = e.target.closest('.grid-cell');
+    if (!cell) return;
 
-        const fromCell     = e.dataTransfer.getData('fromCell');
-        const instrumentId = e.dataTransfer.getData('instrumentId');
+    if (!cell.contains(e.relatedTarget)) {
+      cell.classList.remove('highlight');
+    }
+  });
 
-        if (fromCell) {
-            manager.move(fromCell, key);
-        } else {
-            manager.place(instrumentId, key);
-        }
-    });
+  world.addEventListener('drop', e => {
+    const cell = e.target.closest('.grid-cell');
+    if (!cell) return;
 
-    el.addEventListener('click', () => {
-        if (manager.objects.has(key)) manager.remove(key);
-    });
-});
+    e.preventDefault();
+    cell.classList.remove('highlight');
+
+    const fromCell = e.dataTransfer.getData('fromCell');
+    const instrumentId = e.dataTransfer.getData('instrumentId');
+    const key = cell.dataset.key;
+
+    if (fromCell) {
+      manager.move(fromCell, key);
+    } else {
+      manager.place(instrumentId, key);
+    }
+  });
+
+  world.addEventListener('click', e => {
+    const cell = e.target.closest('.grid-cell');
+    if (!cell) return;
+
+    const key = cell.dataset.key;
+    if (manager.objects.has(key)) {
+      manager.remove(key);
+    }
+  });
 }

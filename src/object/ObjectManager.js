@@ -2,6 +2,7 @@ import { initHelper } from "./initHelper";
 import { placeHelper } from "./placeHelper";
 import { removeHelper } from "./removeHelper";
 import { moveHelper } from "./moveHelper";
+import { expandGridIfNeeded } from "./gridExpansionHelper";
 
 /**
  * @class ObjectManager
@@ -21,7 +22,9 @@ export class ObjectManager {
   }
 
   async place(id, cellKey) {
-    return placeHelper(this, id, cellKey);
+    const result = await placeHelper(this, id, cellKey);
+    expandGridIfNeeded(this);
+    return result;
   }
 
   remove(cellKey) {
@@ -30,6 +33,7 @@ export class ObjectManager {
 
   move(fromKey, toKey) {
     moveHelper(this, fromKey, toKey);
+    expandGridIfNeeded(this);
   }
 
   getAll() {

@@ -2,6 +2,8 @@ import { KEYS } from '../constants/keys.js';
 
 import { setGridStyle, createCell, centerGrid } from './initGrid.js';
 import { initPan }  from './initPan.js';
+import { extendCols } from './extendHelper.js';
+import { applyTransform, setZoom, zoomBy } from './zoomHelper.js';
 
 /**
  * @class GridManager
@@ -24,42 +26,25 @@ export class GridManager {
     this.cols = 64;
   }
 
+  extendCols(amount = 20) {
+    extendCols(this, amount);
+  }
+
   _setOffset(x, y) {
     this._offset = { x, y };
     this._applyTransform();
   }
 
   _applyTransform() {
-    this.world.style.transform = `scale(${this.scale}) translate(${this._offset.x}px, ${this._offset.y}px)`;
-  }
-
-  _clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value));
+    applyTransform(this);
   }
 
   setZoom(scale, focusX, focusY) {
-    const newScale = this._clamp(scale, this.minScale, this.maxScale);
-    if (newScale === this.scale) return;
-
-    const prevScale = this.scale;
-    this.scale = newScale;
-
-    if (typeof focusX === 'number' && typeof focusY === 'number') {
-      const rect = this.world.getBoundingClientRect();
-      const worldX = (focusX - rect.left - this._offset.x) / prevScale;
-      const worldY = (focusY - rect.top - this._offset.y) / prevScale;
-      const offsetX = focusX - rect.left - worldX * newScale;
-      const offsetY = focusY - rect.top - worldY * newScale;
-      this._setOffset(offsetX, offsetY);
-    } else {
-      this._applyTransform();
-    }
+    setZoom(this, scale, focusX, focusY);
   }
 
   zoomBy(deltaY, focusX, focusY) {
-    const direction = deltaY > 0 ? -1 : 1;
-    const nextScale = this.scale + direction * this.scaleStep;
-    this.setZoom(nextScale, focusX, focusY);
+    zoomBy(this, deltaY, focusX, focusY);
   }
 
   init() {

@@ -33,7 +33,7 @@ export function centerGrid(manager) {
     const y = (manager.canvas.clientHeight / 2) - (c4RowIndex * CELL_H);
     manager._offset.x = x;
     manager._offset.y = y;
-    manager.world.style.transform = `translate(${x}px, ${y}px)`;
+    manager._applyTransform();
 
     console.log("Grid Centered.")
 }
