@@ -1,5 +1,5 @@
 export async function loadInstrumentPanel(selectInstrument) {
-  const response = await fetch('/src/data/instruments.json');
+  const response = await fetch('/data/instruments.json');
   const { instruments } = await response.json();
   const list = document.getElementById('instrument-list');
   list.innerHTML = '';

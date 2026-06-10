@@ -3,7 +3,7 @@ const detailCache = new Map();
 
 function loadDetail(id) {
     if (!detailCache.has(id)) {
-        detailCache.set(id, fetch(`/src/data/instruments/${id}.json`)
+        detailCache.set(id, fetch(`/data/instruments/${id}.json`)
             .then(r => r.json())
             .catch(e => { console.error(e); detailCache.delete(id); return null; }));
     }
