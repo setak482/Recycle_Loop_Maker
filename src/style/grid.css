@@ -22,8 +22,29 @@
   transform-origin: top left;
   transform: scale(1) translate(0px, 0px);
   transition: none;
+  --bar-w: 640px; /* 한 마디 폭 (subdivisionHelper가 갱신) */
   /* 주의: 여기에 will-change를 걸면 거대한 그리드 전체가 합성 레이어로
      승격되어 GPU 메모리·래스터 비용이 폭증합니다 (열 확장 시 더 심각). */
+}
+
+/* 저화질(LOD) 모드: 축소 시 빈 격자 셀 DOM 대신 배경 패턴으로 격자와
+   마디선을 그립니다. 셀 DOM은 오브젝트가 놓인 칸만 존재합니다. */
+#grid-world.lod-low {
+  background-image:
+    /* 마디선 (진한 세로선, 한 마디 간격) */
+    repeating-linear-gradient(90deg,
+      rgba(12, 64, 150, 0.24) 0 1px, transparent 1px var(--bar-w)),
+    /* 세로 격자선 (한 칸 간격) */
+    repeating-linear-gradient(90deg,
+      rgba(0, 0, 0, 0.05) 0 1px, transparent 1px var(--cell-w)),
+    /* 가로 격자선 (한 행 간격) */
+    repeating-linear-gradient(0deg,
+      rgba(0, 0, 0, 0.05) 0 1px, transparent 1px var(--cell-h));
+}
+
+/* 저화질 모드에서는 개별 셀 보더를 끄고(배경이 대신 그림) 점유 칸만 강조 */
+#grid-world.lod-low .grid-cell {
+  border: none;
 }
 
 #grid-labels {

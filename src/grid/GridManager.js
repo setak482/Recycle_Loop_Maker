@@ -3,7 +3,7 @@ import { COLS, MAX_COLS } from '../constants/config.js';
 
 import { setGridStyle, createCellStates, centerGrid } from './helpers/initGrid.js';
 import { expandColumns, ensureColumnsForPlacement } from './helpers/expandHelper.js';
-import { updateVirtualWindow } from './helpers/virtualWindow.js';
+import { updateVirtualWindow, syncMaterializedCells } from './helpers/virtualWindow.js';
 import { initPan }  from './helpers/initPan.js';
 import { applyTransform, setZoom, zoomBy } from './helpers/zoomHelper.js';
 import { applySubdivisionMarkers } from './helpers/subdivisionHelper.js';
@@ -90,6 +90,11 @@ export class GridManager {
   // 저장 파일 로드 등에서 특정 열까지 셀이 존재하도록 보장합니다.
   ensureColumns(minCols) {
     return expandColumns(this, minCols, MAX_COLS);
+  }
+
+  // 저화질 모드에서 새로 점유된 셀의 DOM을 보충합니다 (배치/이동 후 호출).
+  syncMaterialized() {
+    syncMaterializedCells(this);
   }
 
   getCell(key)           { return this.cells.get(key); }

@@ -4,17 +4,35 @@ import { isMeasureBoundary } from './subdivisionHelper.js';
 // 화면 양옆으로 여유 있게 유지할 컬럼 수 (팬 중 빈 화면 노출 방지)
 const WINDOW_MARGIN = 12;
 
+// 이 배율 미만으로 축소하면 저화질(LOD) 모드로 전환합니다.
+// 빈 격자 셀은 DOM으로 만들지 않고 CSS 배경 패턴으로 대체하며,
+// 오브젝트가 놓인 셀만 실제로 렌더해 DOM 수를 대폭 줄입니다.
+const LOD_THRESHOLD = 0.6;
+
 /**
  * 가상 윈도 렌더링: 화면에 보이는 컬럼 범위(±여유분)만 셀 DOM을 만들고,
  * 범위를 벗어난 컬럼의 DOM은 제거합니다. 셀의 논리 상태(점유·음높이)는
  * grid.cells Map에 항상 남아 있으므로, 다시 화면에 들어오면 상태로부터
  * 시각 표현(점유·마디선·지속선·배치 이미지·데코레이터)을 복원합니다.
  *
+ * 저화질 모드(축소 시)에서는 점유된 셀만 생성하고, 빈 격자·마디선은
+ * grid-world의 CSS 배경 패턴이 대신 그립니다.
+ *
  * 팬/줌/확장 때마다 호출되며, 범위가 변하지 않으면 즉시 반환합니다.
  */
 export function updateVirtualWindow(grid) {
   const canvasW = grid.canvas.clientWidth;
   if (!canvasW) return;
+
+  // 줌 배율에 따른 LOD 모드 전환
+  const low = grid.scale < LOD_THRESHOLD;
+  if (low !== grid._lodLow) {
+    grid._lodLow = low;
+    grid.world.classList.toggle('lod-low', low);
+    // 모드가 바뀌면 표현 규칙이 달라지므로 현재 컬럼을 전부 제거 후 재생성
+    for (let c = grid.matStart; c < grid.matEnd; c++) dematerializeColumn(grid, c);
+    grid.matStart = grid.matEnd = 0;
+  }
 
   // 캔버스 좌표 → 월드 좌표: world는 left:labelWidth + translate(offset) scale
   const worldLeft  = (0 - grid.labelWidth - grid._offset.x) / grid.scale;
@@ -32,7 +50,7 @@ export function updateVirtualWindow(grid) {
   // 새로 들어온 컬럼 생성 (fragment 일괄 삽입)
   const fragment = document.createDocumentFragment();
   for (let c = start; c < end; c++) {
-    if (c < grid.matStart || c >= grid.matEnd) materializeColumn(grid, c, fragment);
+    if (c < grid.matStart || c >= grid.matEnd) materializeColumn(grid, c, fragment, low);
   }
   if (fragment.childNodes.length) grid.world.appendChild(fragment);
 
@@ -40,7 +58,21 @@ export function updateVirtualWindow(grid) {
   grid.matEnd = end;
 }
 
-function materializeColumn(grid, c, fragment) {
+/**
+ * 저화질 모드에서 오브젝트가 새로 배치/이동되면, 그 셀이 아직 DOM으로
+ * 없을 수 있으므로 현재 윈도 범위 안의 점유 셀을 보충 생성합니다.
+ * (고화질 모드는 빈 셀도 모두 존재하므로 호출해도 즉시 반환합니다.)
+ */
+export function syncMaterializedCells(grid) {
+  if (!grid._lodLow) return;
+  const fragment = document.createDocumentFragment();
+  for (let c = grid.matStart; c < grid.matEnd; c++) {
+    materializeColumn(grid, c, fragment, true);
+  }
+  if (fragment.childNodes.length) grid.world.appendChild(fragment);
+}
+
+function materializeColumn(grid, c, fragment, low) {
   const barLine = grid._markerInterval
     ? isMeasureBoundary(c, grid._markerInterval)
     : false;
@@ -49,6 +81,8 @@ function materializeColumn(grid, c, fragment) {
     const key = `${c}-${r}`;
     const state = grid.cells.get(key);
     if (!state || state.el) continue;
+    // 저화질 모드: 점유된 셀만 생성 (빈 격자·마디선은 CSS 배경이 대신 그림)
+    if (low && !state.occupied) continue;
 
     const el = document.createElement('div');
     el.className = 'grid-cell';
