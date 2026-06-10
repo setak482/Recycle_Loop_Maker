@@ -39,7 +39,7 @@
 
       <div class="bpm-control">
         <span id="bpm-label">120 BPM</span>
-        <input id="btn-bpm" type="range" min="60" max="200" value="120" />
+        <input id="btn-bpm" type="range" min="30" max="200" value="120" />
       </div>
 
       <div class="subdivision-control">
@@ -47,10 +47,13 @@
           <input type="radio" name="sub" value="4n"> ♩
         </label>
         <label>
-          <input type="radio" name="sub" value="8n" checked> ♪
+          <input type="radio" name="sub" value="8n"> ♪
         </label>
         <label>
-          <input type="radio" name="sub" value="16n"> ♬
+          <input type="radio" name="sub" value="16n" checked> ♬
+        </label>
+        <label>
+          <input type="radio" name="sub" value="32n"> 32分
         </label>
       </div>
       <input id="load-file-input" type="file" accept="application/json" hidden />

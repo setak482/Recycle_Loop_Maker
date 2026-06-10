@@ -26,6 +26,11 @@ setupUI(playback, objects, grid);
 loadInstrumentPanel();
 
 grid.world.addEventListener('click', e => {
+  if (grid._panMoved) {
+    grid._panMoved = false;
+    return;
+  }
+
   const cell = e.target.closest('.grid-cell');
   if (!cell) return;
 

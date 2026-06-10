@@ -1,11 +1,15 @@
 export function initPan(manager) {
     let dragging = false;
     let startX, startY, startOffsetX, startOffsetY;
+    const DRAG_THRESHOLD = 6;
+
+    manager._panMoved = false;
 
     manager.canvas.addEventListener('mousedown', e => {
         if (e.target.closest('.placed-object')) return;
         if (e.target.closest('.instrument-item')) return;
         dragging = true;
+        manager._panMoved = false;
         startX = e.clientX;
         startY = e.clientY;
         startOffsetX = manager._offset.x;
@@ -15,9 +19,14 @@ export function initPan(manager) {
 
     window.addEventListener('mousemove', e => {
         if (!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (!manager._panMoved && Math.sqrt(dx * dx + dy * dy) > DRAG_THRESHOLD) {
+            manager._panMoved = true;
+        }
         manager._setOffset(
-        startOffsetX + (e.clientX - startX),
-        startOffsetY + (e.clientY - startY)
+            startOffsetX + dx,
+            startOffsetY + dy
         );
     });
 
@@ -26,5 +35,5 @@ export function initPan(manager) {
         manager.canvas.classList.remove('panning');
     });
 
-    console.log("Pan Initialized.")
+    console.log('Pan Initialized.')
 }

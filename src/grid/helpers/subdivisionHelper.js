@@ -2,6 +2,7 @@ const SUBDIVISION_INTERVALS = {
   '4n': 4,
   '8n': 8,
   '16n': 16,
+  '32n': 32,
 };
 
 export function getMeasureInterval(subdivision) {
