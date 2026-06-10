@@ -2,6 +2,7 @@
 import { GridManager }     from './grid/GridManager.js';
 import { PlaybackManager } from './playback/PlaybackManager.js';
 import { ObjectManager }   from './object/ObjectManager.js';
+import { attachZoomWheel, initZoomIndicator } from './ui/zoomHelper.js';
 
 // ==========================================
 // 1. 핵심 매니저 생성 및 초기화 (실행 영역)
@@ -13,6 +14,9 @@ const objects  = new ObjectManager(grid, playback);
 grid.init();
 objects.init();
 playback.init(grid);
+
+const zoomIndicator = initZoomIndicator();
+attachZoomWheel(grid, zoomIndicator);
 
 // UI 요소 및 이벤트 초기화 실행
 setupUI(playback, objects);
