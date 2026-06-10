@@ -27,12 +27,10 @@ export function moveHelper(manager, fromKey, toKey){
     manager.grid.getCell(toKey).el.appendChild(newImg);
 
     manager.grid.setOccupied(fromKey, false);
-    manager.objects.delete(fromKey);
+    manager.deleteObject(fromKey);
     manager.grid.setOccupied(toKey, true);
-    manager.objects.set(toKey, { ...obj, img: newImg });
+    manager.setObject(toKey, { ...obj, img: newImg });
 
-    manager.playback.unregister(fromKey);
-    manager.playback.register(toKey, obj.detail);
     manager.refreshDurationLines?.();
     manager.playback.updateRange(manager);
 }

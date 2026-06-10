@@ -1,5 +1,6 @@
 import { triggerColHelper } from './triggerHelper.js';
 import { calcRangeHelper } from './rangeHelper.js';
+import { ensureSamplerHelper } from './registerHelper.js';
 import { getMeasureInterval } from '../../grid/helpers/subdivisionHelper.js';
 
 function getStopBoundaryCol(currentCol, interval) {
@@ -20,20 +21,17 @@ export async function startHelper(playbackManager, objectManager) {
   const Tone = playbackManager._Tone;
   await Tone.start();
   Tone.getTransport().bpm.value = playbackManager.bpm;
+  // Tone 로드 전에 조절해 둔 마스터 볼륨을 반영합니다.
+  Tone.Destination.volume.value = playbackManager.masterVolume;
 
   if (!calcRangeHelper(playbackManager, objectManager)) {
     console.warn('배치된 오브젝트 없음');
     return;
   }
 
-  objectManager.objects.forEach((obj, cellKey) => {
-    if (!obj.detail || !obj.detail.sample || !obj.detail.sample.notes) return;
-    if (!playbackManager._samplers.has(cellKey)) {
-      const sampler = new Tone.Sampler({
-        urls: obj.detail.sample.notes,
-      }).toDestination();
-      playbackManager._samplers.set(cellKey, sampler);
-    }
+  // Tone 로드 전에 배치된 오브젝트의 샘플러를 여기서 보장합니다 (악기별 공유).
+  objectManager.objects.forEach(obj => {
+    ensureSamplerHelper(playbackManager, obj.detail);
   });
 
   playbackManager._currentCol = playbackManager._startCol;

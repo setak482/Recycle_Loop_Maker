@@ -23,13 +23,9 @@
   animation: placeBounce 260ms ease-out;
 }
 
-.placed-object.triggered {
-  filter: drop-shadow(0 0 8px rgba(80, 140, 255, 0.9));
-  transform: translate(-50%, -50%) scale(1.15);
-  animation: bounce 0.3s ease;
-}
+/* 트리거 애니메이션은 triggerHelper.js에서 Web Animations API로 처리합니다. */
 
-placed-object.dragging {
+.placed-object.dragging {
   opacity: 0.35;
   cursor: grabbing;
 }

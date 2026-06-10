@@ -25,8 +25,7 @@ export function initPlayheadHelper(playbackManager) {
  */
 export function movePlayheadHelper(playbackManager, col) {
   if (!playbackManager._playhead) return;
-  requestAnimationFrame(() => {
-    // translate3d를 사용하여 확실하게 GPU를 사용하도록 유도합니다.
-    playbackManager._playhead.style.transform = `translate3d(${col * CELL_W}px, 0, 0)`;
-  });
+  // Tone.Draw가 이미 rAF 타이밍에 호출하므로 추가 rAF 없이 바로 씁니다.
+  // translate3d로 GPU 합성을 유도합니다.
+  playbackManager._playhead.style.transform = `translate3d(${col * CELL_W}px, 0, 0)`;
 }

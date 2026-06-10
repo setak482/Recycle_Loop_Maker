@@ -15,9 +15,25 @@ export function isMeasureBoundary(col, interval) {
 
 export function applySubdivisionMarkers(manager, subdivision) {
   const interval = getMeasureInterval(subdivision);
+  const prevInterval = manager._markerInterval ?? null;
   manager.subdivision = subdivision;
-  manager.cells.forEach((cell, key) => {
-    const col = parseInt(key.split('-')[0], 10);
-    cell.el.classList.toggle('bar-line', isMeasureBoundary(col, interval));
-  });
+  if (prevInterval === interval) return;
+  manager._markerInterval = interval;
+
+  const setColumn = (col, on) => {
+    for (let row = 0; row < manager.rows; row++) {
+      manager.cells.get(`${col}-${row}`)?.el.classList.toggle('bar-line', on);
+    }
+  };
+
+  // 마디선은 컬럼 단위로만 달라지므로 전체 셀을 순회하지 않고
+  // 이전 간격에서 빠지는 컬럼과 새 간격의 컬럼만 갱신합니다.
+  if (prevInterval !== null) {
+    for (let col = prevInterval - 1; col < manager.cols; col += prevInterval) {
+      if (!isMeasureBoundary(col, interval)) setColumn(col, false);
+    }
+  }
+  for (let col = interval - 1; col < manager.cols; col += interval) {
+    setColumn(col, true);
+  }
 }
