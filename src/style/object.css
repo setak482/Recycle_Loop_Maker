@@ -23,7 +23,11 @@
   animation: placeBounce 260ms ease-out;
 }
 
-/* 트리거 애니메이션은 triggerHelper.js에서 Web Animations API로 처리합니다. */
+/* 바운스 동작은 triggerHelper.js에서 Web Animations API(transform)로 처리하고,
+   글로우는 보간 비용이 없도록 정적 클래스로만 켜고 끕니다. */
+.placed-object.triggered {
+  filter: drop-shadow(0 0 8px rgba(80, 140, 255, 0.9));
+}
 
 .placed-object.dragging {
   opacity: 0.35;

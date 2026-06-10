@@ -1,13 +1,23 @@
-// 기존 CSS 클래스 방식(.triggered)은 애니메이션 재시작을 위해 강제
-// 리플로우(offsetWidth 읽기)와 setTimeout이 매 틱 필요했습니다.
+// 기존 CSS 클래스 방식은 애니메이션 재시작을 위해 강제 리플로우
+// (offsetWidth 읽기)와 setTimeout이 매 틱 필요했습니다.
 // Web Animations API는 리플로우/타이머 없이 즉시 재시작됩니다.
+// 글로우(filter)는 보간하면 매 프레임 페인트가 발생하므로 정적
+// 클래스(.triggered)로 켜고 끄며, transform만 애니메이션합니다.
 const TRIGGER_KEYFRAMES = [
-  { transform: 'translate(-50%, -50%) scale(1)',    filter: 'drop-shadow(0 0 8px rgba(80, 140, 255, 0.9))', offset: 0 },
+  { transform: 'translate(-50%, -50%) scale(1)' },
   { transform: 'translate(-50%, -60%) scale(1.2)',  offset: 0.3 },
   { transform: 'translate(-50%, -45%) scale(0.95)', offset: 0.6 },
-  { transform: 'translate(-50%, -50%) scale(1)',    filter: 'none', offset: 1 },
+  { transform: 'translate(-50%, -50%) scale(1)' },
 ];
 const TRIGGER_TIMING = { duration: 300, easing: 'ease' };
+
+function playTriggerAnimation(obj) {
+  obj._triggerAnim?.cancel(); // 재트리거 시 이전 애니메이션 정리
+  obj.img.classList.add('triggered');
+  const anim = obj.img.animate(TRIGGER_KEYFRAMES, TRIGGER_TIMING);
+  anim.onfinish = () => obj.img.classList.remove('triggered');
+  obj._triggerAnim = anim;
+}
 
 /**
  * @param {PlaybackManager} playbackManager
@@ -36,7 +46,7 @@ export function triggerColHelper(playbackManager, col, objectManager, time) {
   playbackManager._Tone?.Draw.schedule(() => {
     bucket.forEach(obj => {
       if (obj.detail?.marker) return;
-      obj.img.animate(TRIGGER_KEYFRAMES, TRIGGER_TIMING);
+      playTriggerAnimation(obj);
     });
   }, time);
 }

@@ -22,8 +22,8 @@
   transform-origin: top left;
   transform: scale(1) translate(0px, 0px);
   transition: none;
-  /* 팬/줌 시 1만여 개 셀을 리페인트하지 않고 합성 레이어로 이동만 하도록 */
-  will-change: transform;
+  /* 주의: 여기에 will-change를 걸면 거대한 그리드 전체가 합성 레이어로
+     승격되어 GPU 메모리·래스터 비용이 폭증합니다 (열 확장 시 더 심각). */
 }
 
 #grid-labels {
@@ -35,7 +35,6 @@
   pointer-events: none;
   transform-origin: top left;
   background: rgba(220, 220, 220, 0);
-  will-change: transform;
 }
 
 .grid-label {

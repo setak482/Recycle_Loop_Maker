@@ -42,16 +42,11 @@ export class GridManager {
     this._applyTransform();
   }
 
-  // mousemove/wheel은 프레임보다 자주 발생할 수 있으므로
-  // 스타일 쓰기를 rAF당 한 번으로 합칩니다 (상태는 동기 유지).
+  // 브라우저가 mousemove/wheel을 이미 프레임 단위로 정렬해 주므로
+  // 추가 rAF 배칭 없이 바로 씁니다 (배칭은 한 프레임 지연만 더함).
   _applyTransform() {
-    if (this._transformPending) return;
-    this._transformPending = true;
-    requestAnimationFrame(() => {
-      this._transformPending = false;
-      applyTransform(this);
-      updateRowLabelTransform(this);
-    });
+    applyTransform(this);
+    updateRowLabelTransform(this);
   }
 
   setZoom(scale, focusX, focusY) {
