@@ -4,6 +4,7 @@ export async function loadInstrumentPanel(selectInstrument) {
   const list = document.getElementById('instrument-list');
   list.innerHTML = '';
 
+  const fragment = document.createDocumentFragment();
   instruments.forEach(inst => {
     const item = document.createElement('div');
     item.classList.add('instrument-item');
@@ -12,6 +13,7 @@ export async function loadInstrumentPanel(selectInstrument) {
     item.innerHTML = `<img src="${iconSrc}" alt="${inst.name}" /><span>${inst.name}</span>`;
 
     item.addEventListener('click', () => selectInstrument(inst.id, item, inst));
-    list.appendChild(item);
+    fragment.appendChild(item);
   });
+  list.appendChild(fragment);
 }

@@ -42,9 +42,16 @@ export class GridManager {
     this._applyTransform();
   }
 
+  // mousemove/wheel은 프레임보다 자주 발생할 수 있으므로
+  // 스타일 쓰기를 rAF당 한 번으로 합칩니다 (상태는 동기 유지).
   _applyTransform() {
-    applyTransform(this);
-    updateRowLabelTransform(this);
+    if (this._transformPending) return;
+    this._transformPending = true;
+    requestAnimationFrame(() => {
+      this._transformPending = false;
+      applyTransform(this);
+      updateRowLabelTransform(this);
+    });
   }
 
   setZoom(scale, focusX, focusY) {

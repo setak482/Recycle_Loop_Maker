@@ -11,12 +11,8 @@ export function setupPlaybackControls(playback, objects) {
       return;
     }
 
+    // 버튼 상태는 아래 setPlaybackStateCallback에서 갱신됩니다.
     playback.toggle(objects);
-    setTimeout(() => {
-      const isPlaying = playback._Tone?.getTransport().state === 'started';
-      playBtn.classList.toggle('playing', isPlaying);
-      document.getElementById('play-icon').textContent = isPlaying ? '⏹' : '▶';
-    }, 100);
   });
 
   const bpmInput = document.getElementById('btn-bpm');

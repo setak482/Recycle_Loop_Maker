@@ -6,7 +6,7 @@ import { KEYS } from '../../constants/keys.js';
  * [실행 흐름]
  * 1. 쉼표처럼 샘플이 없는 악기는 무음 처리
  * 2. Tone이 아직 로드되지 않았다면 이 시점(사용자 입력 직후)에 동적 로드
- * 3. 해당 셀의 샘플러가 없으면 등록하고, 버퍼 로드를 기다린 뒤 트리거
+ * 3. 악기 공유 샘플러가 없으면 등록하고, 버퍼 로드를 기다린 뒤 트리거
  *
  * @param {PlaybackManager} playbackManager
  * @param {string} cellKey - "col-row" 형식의 셀 키
@@ -27,17 +27,15 @@ export async function previewNoteHelper(playbackManager, cellKey, detail) {
   const Tone = playbackManager._Tone;
   await Tone.start();
 
-  if (!playbackManager._samplers.has(cellKey)) {
-    playbackManager.register(cellKey, detail);
-  }
-  const sampler = playbackManager._samplers.get(cellKey);
+  // 샘플러는 악기별로 공유됩니다 (id 키)
+  playbackManager.register(detail);
+  const sampler = playbackManager._samplers.get(detail.id);
   if (!sampler) return;
 
   if (!sampler.loaded) {
     await Tone.loaded();
   }
-  // 버퍼 로드를 기다리는 사이 오브젝트가 제거되었을 수 있음
-  if (playbackManager._samplers.get(cellKey) !== sampler || !sampler.loaded) return;
+  if (!sampler.loaded) return;
 
   sampler.triggerAttackRelease(note, detail.duration ?? 1);
 }

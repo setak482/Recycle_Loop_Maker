@@ -25,11 +25,14 @@ export function expandColumns(grid, targetCols, maxCols = Infinity) {
   if (desired <= grid.cols) return false;
 
   const oldCols = grid.cols;
+  // 확장당 수천 개 셀이 추가되므로 fragment에 모아 한 번에 삽입합니다.
+  const fragment = document.createDocumentFragment();
   for (let r = 0; r < grid.rows; r++) {
     for (let c = oldCols; c < desired; c++) {
-      buildCell(grid.world, grid.cells, r, c);
+      buildCell(fragment, grid.cells, r, c);
     }
   }
+  grid.world.appendChild(fragment);
 
   grid.cols = desired;
   grid.world.style.gridTemplateColumns = `repeat(${desired}, ${CELL_W}px)`;

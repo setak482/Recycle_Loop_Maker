@@ -22,6 +22,8 @@
   transform-origin: top left;
   transform: scale(1) translate(0px, 0px);
   transition: none;
+  /* 팬/줌 시 1만여 개 셀을 리페인트하지 않고 합성 레이어로 이동만 하도록 */
+  will-change: transform;
 }
 
 #grid-labels {
@@ -33,6 +35,7 @@
   pointer-events: none;
   transform-origin: top left;
   background: rgba(220, 220, 220, 0);
+  will-change: transform;
 }
 
 .grid-label {
@@ -56,6 +59,8 @@
   box-sizing: border-box;
   border-right:  1px solid rgba(0,0,0,0.04);
   border-bottom: 1px solid rgba(0,0,0,0.04);
+  /* 셀 내부 변화가 그리드 전체 레이아웃 계산으로 번지지 않도록 격리 */
+  contain: layout style;
 }
 
 /* border 두께를 바꾸면 셀 내부 기준점이 밀려 블록이 미세하게 이동하므로
@@ -104,4 +109,5 @@
   pointer-events: none;
   z-index: 5;
   transition: transform 0.05s linear;
+  will-change: transform;
 }

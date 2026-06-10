@@ -15,7 +15,7 @@ function loadDetail(id) {
  *
  * [실행 흐름]
  * 1. 중복 배치 검사 (이미 차지된 셀인 경우 즉시 중단)
- * 2. 외부 JSON 파일에서 악기 상세 데이터 비동기 로드
+ * 2. 캐시된 악기 상세 JSON 비동기 로드
  * 3. 드래그앤드롭이 가능한 악기 이미지(DOM) 요소 생성 및 이벤트 등록
  * 4. 생성된 이미지를 화면(DOM)에 배치하고 매니저 상태 데이터 업데이트
  * 5. 오디오 재생 시스템(Playback)에 소리 등록 및 타임라인 범위 갱신
@@ -73,9 +73,9 @@ export async function placeHelper(manager, id, cellKey, { preview = false } = {}
     }, { once: true });
 
     manager.grid.setOccupied(cellKey, true);
-    manager.objects.set(cellKey, { id, img, detail });
+    manager.setObject(cellKey, { id, img, detail });
 
-    manager.playback.register(cellKey, detail);
+    manager.playback.register(detail);
     manager.refreshDurationLines?.();
     manager.playback.updateRange(manager);
 

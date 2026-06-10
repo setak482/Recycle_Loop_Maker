@@ -2,7 +2,7 @@ import { DEFAULT_BPM, DEFAULT_SUB } from '../constants/config.js';
 import { initHelper, initPlayheadHelper, movePlayheadHelper } from './helpers/initHelper.js';
 import { calcRangeHelper, updateRangeHelper } from './helpers/rangeHelper.js';
 import { triggerColHelper } from './helpers/triggerHelper.js';
-import { registerHelper, unregisterHelper } from './helpers/registerHelper.js';
+import { ensureSamplerHelper } from './helpers/registerHelper.js';
 import { startHelper, stopHelper } from './helpers/transportHelper.js';
 import { previewNoteHelper } from './helpers/previewHelper.js';
 
@@ -16,7 +16,7 @@ export class PlaybackManager {
   constructor() {
     this.bpm = DEFAULT_BPM;
     this._loop = null;
-    this._samplers = new Map();
+    this._samplers = new Map(); // instrumentId → Tone.Sampler (악기별 공유)
     this._playhead = null;
     this._world = null;
     this._startCol = 0;          // 재생 시작 위치 (시작점 마커 반영)
@@ -62,12 +62,8 @@ export class PlaybackManager {
     triggerColHelper(this, col, objectManager, time);
   }
 
-  register(cellKey, detail) {
-    registerHelper(this, cellKey, detail);
-  }
-
-  unregister(cellKey) {
-    unregisterHelper(this, cellKey);
+  register(detail) {
+    ensureSamplerHelper(this, detail);
   }
 
   previewNote(cellKey, detail) {
