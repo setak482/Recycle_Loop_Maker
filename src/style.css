@@ -148,6 +148,31 @@ body {
   transition: none;
 }
 
+#grid-labels {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 54px;
+  z-index: 10;
+  pointer-events: none;
+  transform-origin: top left;
+  background: rgba(220, 220, 220, 0);
+}
+
+.grid-label {
+  width: 100%;
+  height: var(--cell-h);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  color: #4d5562;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  background: transparent;
+}
+
 #zoom-indicator {
   position: fixed;
   top: 18px;
@@ -155,10 +180,10 @@ body {
   z-index: 250;
   min-width: 132px;
   padding: 12px 14px;
-  background: rgba(18, 24, 44, 0.82);
-  color: white;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1f2330;
   border-radius: 18px;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
   backdrop-filter: blur(10px);
   opacity: 0;
   pointer-events: none;
@@ -207,6 +232,10 @@ body {
   /* 격자 거의 안 보이게 */
   border-right:  1px solid rgba(0,0,0,0.04);
   border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+
+.grid-cell.bar-line {
+  border-right: 2px solid rgba(12, 64, 150, 0.24);
 }
 
 /* 흑건 행 */

@@ -1,4 +1,4 @@
-import { CELL_W } from '../constants/config.js';
+import { CELL_W } from '../../constants/config.js';
 
 /**
  * @param {PlaybackManager} playbackManager

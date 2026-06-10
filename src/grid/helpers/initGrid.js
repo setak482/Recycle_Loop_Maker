@@ -1,5 +1,5 @@
-import { KEYS } from "../constants/keys";
-import { CELL_H, CELL_W } from "../constants/config";
+import { KEYS } from "../../constants/keys";
+import { CELL_H, CELL_W } from "../../constants/config";
 
 export function setGridStyle(worldElement, rows, cols){
     worldElement.style.gridTemplateColumns = `repeat(${cols}, ${CELL_W}px)`;
@@ -27,13 +27,15 @@ export function createCell(worldElement, cellElement, rows, cols) {
 }
 
 export function centerGrid(manager) {
-// 가로 중앙, 세로는 C4 행이 화면 중간에 오도록
-    const c4RowIndex = KEYS.findIndex(k => k.note === 'C4');
-    const x = (manager.canvas.clientWidth  - manager.cols * CELL_W) / 2;
-    const y = (manager.canvas.clientHeight / 2) - (c4RowIndex * CELL_H);
-    manager._offset.x = x;
-    manager._offset.y = y;
-    manager._applyTransform();
+  // 가로 중앙, 세로는 C4 행이 화면 중간에 오도록
+  const c4RowIndex = KEYS.findIndex(k => k.note === 'C4');
+  const x = ((manager.canvas.clientWidth - manager.labelWidth) - manager.cols * CELL_W) / 2 + manager.labelWidth;
+  const y = (manager.canvas.clientHeight / 2) - (c4RowIndex * CELL_H);
 
-    console.log("Grid Centered.")
+  manager.world.style.left = `${manager.labelWidth}px`;
+  manager._offset.x = x;
+  manager._offset.y = y;
+  manager._applyTransform();
+
+  console.log('Grid Centered.')
 }

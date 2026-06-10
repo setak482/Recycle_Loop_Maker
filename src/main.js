@@ -19,7 +19,7 @@ const zoomIndicator = initZoomIndicator();
 attachZoomWheel(grid, zoomIndicator);
 
 // UI 요소 및 이벤트 초기화 실행
-setupUI(playback, objects);
+setupUI(playback, objects, grid);
 loadInstrumentPanel();
 
 
@@ -28,7 +28,7 @@ loadInstrumentPanel();
 // ==========================================
 
 /** 전체 UI 이벤트 리스너 등록 */
-function setupUI(playback, objects) {
+function setupUI(playback, objects, grid) {
   // ── 패널 열고 닫기 토글 ──
   document.querySelectorAll('.floating-panel').forEach(panel => {
     panel.querySelector('.panel-toggle')?.addEventListener('click', (e) => {
@@ -62,7 +62,9 @@ function setupUI(playback, objects) {
   // ── 박자(Subdivision) 라디오 버튼 제어 ──
   document.querySelectorAll('input[name="sub"]').forEach(radio => {
     radio.addEventListener('change', e => {
-      playback.setSubdivision(e.target.value);
+      const value = e.target.value;
+      playback.setSubdivision(value);
+      grid.setSubdivision(value);
     });
   });
 }

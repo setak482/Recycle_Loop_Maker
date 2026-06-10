@@ -1,4 +1,4 @@
-import { KEYS } from '../constants/keys.js';
+import { KEYS } from '../../constants/keys.js';
 
 export function applyTransform(manager) {
   manager.world.style.transform = `translate(${manager._offset.x}px, ${manager._offset.y}px) scale(${manager.scale})`;

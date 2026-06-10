@@ -1,4 +1,4 @@
-import { KEYS } from '../constants/keys.js';
+import { KEYS } from '../../constants/keys.js';
 
 /**
  * @param {PlaybackManager} playbackManager

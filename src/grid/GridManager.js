@@ -1,9 +1,11 @@
 import { KEYS } from '../constants/keys.js';
+import { COLS } from '../constants/config.js';
 
 import { setGridStyle, createCell, centerGrid } from './helpers/initGrid.js';
 import { initPan }  from './helpers/initPan.js';
-import { extendCols } from './helpers/extendHelper.js';
 import { applyTransform, setZoom, zoomBy } from './helpers/zoomHelper.js';
+import { applySubdivisionMarkers } from './helpers/subdivisionHelper.js';
+import { createRowLabels, updateRowLabelTransform } from './helpers/labelHelper.js';
 
 /**
  * @class GridManager
@@ -17,18 +19,22 @@ export class GridManager {
     this.world  = document.getElementById('grid-world');
     this.cells  = new Map();   // "col-row" → { el, occupied, note }
     this._offset = { x: 0, y: 0 };
+
+    // 줌 및 스케일 관련 초기값
     this.scale = 1;
     this.minScale = 0.3;
     this.maxScale = 2.0;
     this.scaleStep = 0.1;
 
+    // 초기 그리드 크기 (행은 키 수에 맞춰 고정, 열은 config.COLS로 관리)
     this.rows = KEYS.length;
-    this.cols = 64;
+    this.cols = COLS;
+    this.labelWidth = 64;
+    // 기본 분할 단위 설정
+    this.subdivision = '16n';
   }
 
-  extendCols(amount = 20) {
-    extendCols(this, amount);
-  }
+  // dynamic grid extension removed
 
   _setOffset(x, y) {
     this._offset = { x, y };
@@ -37,6 +43,7 @@ export class GridManager {
 
   _applyTransform() {
     applyTransform(this);
+    updateRowLabelTransform(this);
   }
 
   setZoom(scale, focusX, focusY) {
@@ -50,8 +57,14 @@ export class GridManager {
   init() {
     setGridStyle(this.world, this.rows, this.cols);
     createCell(this.world, this.cells, this.rows, this.cols);
+    createRowLabels(this);
     initPan(this);
     centerGrid(this);
+    applySubdivisionMarkers(this, this.subdivision);
+  }
+
+  setSubdivision(subdivision) {
+    applySubdivisionMarkers(this, subdivision);
   }
 
   getCell(key)           { return this.cells.get(key); }

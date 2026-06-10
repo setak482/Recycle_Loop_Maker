@@ -2,7 +2,7 @@ import { initHelper } from './helpers/initHelper.js';
 import { placeHelper } from './helpers/placeHelper.js';
 import { removeHelper } from './helpers/removeHelper.js';
 import { moveHelper } from './helpers/moveHelper.js';
-import { expandGridIfNeeded } from './helpers/gridExpansionHelper.js';
+// Dynamic grid expansion disabled; helper removed
 
 /**
  * @class ObjectManager
@@ -23,7 +23,6 @@ export class ObjectManager {
 
   async place(id, cellKey) {
     const result = await placeHelper(this, id, cellKey);
-    expandGridIfNeeded(this);
     return result;
   }
 
@@ -33,7 +32,6 @@ export class ObjectManager {
 
   move(fromKey, toKey) {
     moveHelper(this, fromKey, toKey);
-    expandGridIfNeeded(this);
   }
 
   getAll() {
