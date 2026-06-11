@@ -82,7 +82,9 @@ export function renderGrid(manager) {
     ctx.stroke();
   }
 
-  // 3. 그리드 선
+  // 3. 그리드 선 (토글로 숨김 가능)
+  if (!manager.showGridLines) return;
+
   const top = rowStart * CELL_H;
   const bottom = rowEnd * CELL_H;
   const left = colStart * CELL_W;

@@ -34,6 +34,8 @@ export class GridManager {
     this.labelWidth = 64;
     // 기본 분할 단위 설정
     this.subdivision = '16n';
+    // 그리드 선 표시 여부 (토글 버튼으로 제어)
+    this.showGridLines = true;
 
     // 캔버스에 그리는 셀 시각 상태 (셀 div의 class 토글 대체)
     this.occupiedKeys = new Set();
@@ -92,6 +94,12 @@ export class GridManager {
 
   setSubdivision(subdivision) {
     applySubdivisionMarkers(this, subdivision);
+  }
+
+  toggleGridLines() {
+    this.showGridLines = !this.showGridLines;
+    this.requestRender();
+    return this.showGridLines;
   }
 
   /**

@@ -1,5 +1,5 @@
 import { showToast } from './Toast.js';
-import { setupFloatingPanels, setupSubdivisionControls } from './helpers/uiPanelHelpers.js';
+import { setupFloatingPanels, setupSubdivisionControls, setupGridToggle } from './helpers/uiPanelHelpers.js';
 import { setupPlaybackControls, setupFileControls } from './helpers/playbackControls.js';
 import { loadInstrumentPanel } from './helpers/instrumentPanel.js';
 import { setupGridPlacement } from './helpers/gridPlacementHandler.js';
@@ -16,6 +16,7 @@ export function setupUI(playback, objects, selection, grid) {
     selectedInstrumentElement = null;
   });
   setupSubdivisionControls(playback, grid, objects);
+  setupGridToggle(grid);
   setupGridPlacement(grid, objects, selection, () => selectedInstrumentId);
 
   loadInstrumentPanel((instId, element) => {
