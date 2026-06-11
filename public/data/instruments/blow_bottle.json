@@ -7,7 +7,7 @@
   "img": "/img/blow_bottle.png",
   "pitched": true,
   "volume": 0,
-  "duration": 1,
+  "duration": 1.75,
   "sample": {
     "type": "sampler",
     "notes": {
