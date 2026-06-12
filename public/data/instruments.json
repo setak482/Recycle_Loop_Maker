@@ -2,7 +2,6 @@
   "categories": [
     { "id": "melody", "name": "멜로디" },
     { "id": "beat", "name":"비트"},
-    { "id": "rest",   "name": "쉼표" },
     { "id": "marker", "name": "마커" }
   ],
   "instruments": [
@@ -13,7 +12,6 @@
     { "id": "kick_box", "name": "종이박스", "role": "beat", "category": "beat", "pitched": false },
     { "id": "hit_tin_can", "name": "캔 두드리기", "role": "beat", "category": "beat", "pitched": false },
     { "id": "opening_can", "name": "캔 따기", "role": "beat", "category": "beat", "pitched": false },
-    { "id": "rest",         "name": "쉼표",          "role": "rest",   "category": "rest",   "pitched": false },
     { "id": "marker_start", "name": "시작점",        "role": "marker", "category": "marker", "pitched": false, "img": "/img/marker_start.svg" },
     { "id": "marker_stop",  "name": "중단점",        "role": "marker", "category": "marker", "pitched": false, "img": "/img/marker_stop.svg" },
     { "id": "repeat_start", "name": "도돌이표 시작", "role": "marker", "category": "marker", "pitched": false, "img": "/img/repeat_start.svg" },
