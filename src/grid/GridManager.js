@@ -27,9 +27,9 @@ export class GridManager {
 
     // 줌 및 스케일 관련 초기값
     this.scale = 1;
-    this.minScale = 0.1;
+    this.minScale = 0.3;
     this.maxScale = 1.8;
-    this.scaleStep = 0.1;
+    this.scaleStep = 0.05;
 
     // 초기 그리드 크기 (행은 키 수에 맞춰 고정, 열은 동적으로 확장됨)
     this.rows = KEYS.length;
